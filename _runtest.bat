@@ -2,7 +2,7 @@ REM Please use first argument for ITERATIONS, second to specify which test it is
 @echo off
 
 REM Path where the .XML output files are found
-set TEST_PATH=C:\Users\QBR77747\Documents\mantid_build\bin\Testing
+set TEST_PATH=.\bin\Testing
 
 REM The name of the XML files. This must be changed manually because i'm lazy
 set DEFAULT_TEST_NAME=TEST-AlgorithmsTest
@@ -13,17 +13,17 @@ set XML_EXT=xml
 REM Storage directory for the output tests
 set STORAGE_DIR=C:\Users\QBR77747\Documents\mantid_issues\Issue-17273_MantidPerfTests
 
-REM Input file containing the test file names
-set INPUT_FILE_DIR=%3
-IF [%INPUT_FILE_DIR%] == [] set INPUT_FILE_DIR=.\_runtest_input.txt
+REM How many iterations of tests to run
+set ITERATION_COUNT=%1
+IF [%ITERATION_COUNT%] == [] set ITERATION_COUNT=5
 
+REM Input file containing the test file names
 REM Test file mode, this should be NEW or OLD, but in theory anything should work
 set TEST_MODE=%2
 IF [%TEST_MODE%] == [] set TEST_MODE=new
 
-REM How many iterations of tests to run
-set ITERATION_COUNT=%1
-IF [%ITERATION_COUNT%] == [] set ITERATION_COUNT=5
+set INPUT_FILE_DIR=%3
+IF [%INPUT_FILE_DIR%] == [] set INPUT_FILE_DIR=.\_runtest_input.txt
 
 @echo off
 mkdir %OUTPUT_STORAGE_DIR%

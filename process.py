@@ -139,7 +139,7 @@ if(argc < 3):
     exportDir = "./"
 else:
     exportDir = argv[2]
-    # Truncate trailing dash    
+    # Truncate trailing dash
     if(exportDir[-1:] == '/' or exportDir[-1:] == '\\'):
         exportDir = exportDir[:-1]
 
