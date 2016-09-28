@@ -1,4 +1,4 @@
-REM Please use first argument for ITERATIONS, second to specify which test it is -> new / old and last one to specify the test itself, e.g. _runtest.bat 10 new _runtest_input.txt
+REM Please use first argument for ITERATIONS, second to specify which test it is -> new / old and last one to specify the input test file, e.g. _runtest.bat 10 new _runtest_input.txt
 @echo off
 
 REM Path where the .XML output files are found
@@ -25,37 +25,24 @@ IF [%TEST_MODE%] == [] set TEST_MODE=new
 set INPUT_FILE_DIR=%3
 IF [%INPUT_FILE_DIR%] == [] set INPUT_FILE_DIR=.\_runtest_input.txt
 
-@echo off
-mkdir %OUTPUT_STORAGE_DIR%
-
 for /F "tokens=*" %%A in (%INPUT_FILE_DIR%) do (
-	REM Name of the file test
-	set FILE_NAME=%%A
-	REM The output directory of the .XML file
-	set OUTPUT_STORAGE_DIR=%STORAGE_DIR%\%FILE_NAME%\%TEST_MODE%
 
-	REM Reconstructing the name of the TEST-AlgorithmsTest.. etc
-	set TEST_NAME=%DEFAULT_TEST_NAME%.%FILE_NAME%.%XML_EXT%
-
-	REM The relative dir from the process.bat to the tests
-	set PYTHON_RELATIVE_DIR=.\%FILE_NAME%\%TEST_MODE%
-
-	echo Running test for %FILE_NAME%
+	echo Running test for %%A
 	echo %ITERATION_COUNT%
 
-	mkdir %OUTPUT_STORAGE_DIR%
+	mkdir %STORAGE_DIR%\%%A\%TEST_MODE%
 
 	for /l %%x IN (1, 1, %ITERATION_COUNT%) DO (
-			echo Running tests for %DEFAULT_TEST_NAME%
-	    start /w ctest -C Debug -j8 -V -R %FILE_NAME%
+		echo Running tests for %%A
+	    start /w ctest -C Release -j8 -R %%A
 
-	    if exist %OUTPUT_STORAGE_DIR%\%TEST_NAME% (
+	    if exist %STORAGE_DIR%\%%A\%TEST_MODE%\%DEFAULT_TEST_NAME%.%%A.%XML_EXT% (
 	      REM File exists, renaming..
-	      move %TEST_PATH%\%TEST_NAME% %OUTPUT_STORAGE_DIR%\%DEFAULT_TEST_NAME%.%FILE_NAME%-%%x-.%XML_EXT%
+	      move %TEST_PATH%\%DEFAULT_TEST_NAME%.%%A.%XML_EXT% %STORAGE_DIR%\%%A\%TEST_MODE%\%DEFAULT_TEST_NAME%.%%A-%%x-.%XML_EXT%
 	    ) else (
-	      move %TEST_PATH%\%TEST_NAME% %OUTPUT_STORAGE_DIR%\%TEST_NAME%
+	      move %TEST_PATH%\%DEFAULT_TEST_NAME%.%%A.%XML_EXT% %STORAGE_DIR%\%%A\%TEST_MODE%\%DEFAULT_TEST_NAME%.%%A.%XML_EXT%
 	    )
 	)
 	echo Running python algorithm at %STORAGE_DIR%
-	start /w %STORAGE_DIR%\process.bat %STORAGE_DIR% %PYTHON_RELATIVE_DIR%
+	start /w %STORAGE_DIR%\process.bat %STORAGE_DIR% .\%%A\%TEST_MODE%
 )
